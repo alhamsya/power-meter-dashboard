@@ -274,37 +274,6 @@ export default function Home() {
               </LineChart>
             </ResponsiveContainer>
           </div>
-
-          <div className="rounded-lg border border-zinc-200 bg-white p-4">
-            <div className="overflow-auto">
-              <table className="w-full min-w-[520px] text-left text-sm">
-                <thead className="text-xs text-zinc-500">
-                  <tr>
-                    <th className="py-2 pr-4">Time</th>
-                    <th className="py-2 pr-4">Value</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-100">
-                  {series.length === 0 && !loadingSeries ? (
-                    <tr>
-                      <td className="py-3 text-zinc-500" colSpan={2}>
-                        No data.
-                      </td>
-                    </tr>
-                  ) : null}
-
-                  {series.map((p) => (
-                    <tr key={`${p.time}-${p.value}`}>
-                      <td className="py-2 pr-4 font-mono text-xs">
-                        {new Date(p.time).toLocaleString()}
-                      </td>
-                      <td className="py-2 pr-4">{fmtNum(p.value, 6)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
         </section>
 
         <section>
@@ -330,44 +299,6 @@ export default function Home() {
                 />
               </LineChart>
             </ResponsiveContainer>
-          </div>
-
-          <div className="rounded-lg border border-zinc-200 bg-white p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="text-sm text-zinc-700">
-                Total (30d):{" "}
-                <span className="font-semibold">{fmtNum(total30d, 6)} kWh</span>
-              </div>
-            </div>
-
-            <div className="overflow-auto">
-              <table className="w-full min-w-[520px] text-left text-sm">
-                <thead className="text-xs text-zinc-500">
-                  <tr>
-                    <th className="py-2 pr-4">Day</th>
-                    <th className="py-2 pr-4">Usage (kWh)</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-100">
-                  {daily.length === 0 && !loadingDaily ? (
-                    <tr>
-                      <td className="py-3 text-zinc-500" colSpan={2}>
-                        No data.
-                      </td>
-                    </tr>
-                  ) : null}
-
-                  {daily.map((d) => (
-                    <tr key={`${d.day}-${d.usage_kwh}`}>
-                      <td className="py-2 pr-4 font-mono text-xs">
-                        {String(d.day).slice(0, 10)}
-                      </td>
-                      <td className="py-2 pr-4">{fmtNum(Number(d.usage_kwh), 6)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
           </div>
         </section>
 
