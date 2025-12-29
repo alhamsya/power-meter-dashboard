@@ -172,7 +172,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900">
       <header className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto flex max-w-screen-xl flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex max-w-none flex-col gap-2 px-4 sm:px-6 lg:px-10 2xl:px-16 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-xl font-semibold">Power Meter Dashboard</h1>
             <p className="text-sm text-zinc-600">
@@ -209,7 +209,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-screen-xl px-4 py-6">
+      <main className="mx-auto max-w-none px-4 sm:px-6 lg:px-10 2xl:px-16 py-6">
         {error ? (
           <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
             {error}
