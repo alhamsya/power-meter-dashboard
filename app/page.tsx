@@ -9,6 +9,8 @@ type Latest = { metric: string; time: string; value: number };
 type Point = { time: string; value: number };
 type Daily = { day: string; usage_kwh: number };
 
+type ApiEnvelope<T> = { data?: T };
+
 const METRICS = [
   "volts",
   "current",
@@ -61,7 +63,15 @@ export default function Home() {
         `${res.status} ${res.statusText}${text ? ` — ${text}` : ""}`
       );
     }
-    return (await res.json()) as T;
+
+    const json = (await res.json()) as unknown;
+
+    // Support either direct payload (e.g., `[...]`) or envelope (e.g., `{ data: [...] }`).
+    if (json && typeof json === "object" && "data" in (json as any)) {
+      return (json as ApiEnvelope<T>).data as T;
+    }
+
+    return json as T;
   }
 
   useEffect(() => {
@@ -75,7 +85,7 @@ export default function Home() {
           deviceId
         )}`;
         const data = await fetchJSON<Latest[]>(url);
-        if (!cancelled) setLatest(data);
+        if (!cancelled) setLatest(Array.isArray(data) ? data : []);
       } catch (e: any) {
         if (!cancelled) setError(`Latest: ${e?.message ?? String(e)}`);
       } finally {
@@ -102,7 +112,7 @@ export default function Home() {
         u.searchParams.set("to", toISO(now));
 
         const data = await fetchJSON<Point[]>(u.toString());
-        if (!cancelled) setSeries(data);
+        if (!cancelled) setSeries(Array.isArray(data) ? data : []);
       } catch (e: any) {
         if (!cancelled) setError(`Time-series: ${e?.message ?? String(e)}`);
       } finally {
@@ -130,7 +140,7 @@ export default function Home() {
         u.searchParams.set("to", to);
 
         const data = await fetchJSON<Daily[]>(u.toString());
-        if (!cancelled) setDaily(data);
+        if (!cancelled) setDaily(Array.isArray(data) ? data : []);
       } catch (e: any) {
         if (!cancelled) setError(`Daily usage: ${e?.message ?? String(e)}`);
       } finally {
