@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 
 import {
+  AreaChart,
+  Area,
   LineChart,
   Line,
   XAxis,
@@ -255,7 +257,13 @@ export default function Home() {
 
           <div className="mb-4 h-[300px] w-full rounded-lg border border-zinc-200 bg-white p-2">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={series} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
+              <AreaChart data={series} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="time"
@@ -265,13 +273,15 @@ export default function Home() {
                 <Tooltip
                   labelFormatter={(v) => new Date(v as string).toLocaleString()}
                 />
-                <Line
+                <Area
                   type="monotone"
                   dataKey="value"
                   stroke="#2563eb"
+                  fill="url(#colorValue)"
                   dot={false}
+                  strokeWidth={2}
                 />
-              </LineChart>
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </section>
