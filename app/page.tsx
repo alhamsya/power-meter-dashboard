@@ -2,6 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
+
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE?.trim() || "http://localhost:8080";
 
@@ -243,6 +253,28 @@ export default function Home() {
             </span>
           </div>
 
+          <div className="mb-4 h-[300px] w-full rounded-lg border border-zinc-200 bg-white p-2">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={series} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="time"
+                  tickFormatter={(v) => new Date(v).toLocaleTimeString()}
+                />
+                <YAxis />
+                <Tooltip
+                  labelFormatter={(v) => new Date(v as string).toLocaleString()}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#2563eb"
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
           <div className="rounded-lg border border-zinc-200 bg-white p-4">
             <div className="overflow-auto">
               <table className="w-full min-w-[520px] text-left text-sm">
@@ -281,6 +313,23 @@ export default function Home() {
             <span className="text-xs text-zinc-500">
               {loadingDaily ? "Loading..." : `${daily.length} days`}
             </span>
+          </div>
+
+          <div className="mb-4 h-[300px] w-full rounded-lg border border-zinc-200 bg-white p-2">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={daily} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="usage_kwh"
+                  stroke="#16a34a"
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
 
           <div className="rounded-lg border border-zinc-200 bg-white p-4">
