@@ -71,7 +71,7 @@ export default function Home() {
       try {
         setError(null);
         setLoadingLatest(true);
-        const url = `${API_BASE}/v1/api/dashboard/latest?device_id=${encodeURIComponent(
+        const url = `${API_BASE}/v1/api/power/latest?device_id=${encodeURIComponent(
           deviceId
         )}`;
         const data = await fetchJSON<Latest[]>(url);
@@ -95,7 +95,7 @@ export default function Home() {
       try {
         setError(null);
         setLoadingSeries(true);
-        const u = new URL(`${API_BASE}/v1/api/dashboard/timeseries`);
+        const u = new URL(`${API_BASE}/v1/api/power/time-series`);
         u.searchParams.set("device_id", deviceId);
         u.searchParams.set("metric", metric);
         u.searchParams.set("from", toISO(from24h));
@@ -124,7 +124,7 @@ export default function Home() {
         setLoadingDaily(true);
         const from = from30d.toISOString().slice(0, 10);
         const to = new Date().toISOString().slice(0, 10);
-        const u = new URL(`${API_BASE}/v1/api/dashboard/daily-usage`);
+        const u = new URL(`${API_BASE}/v1/api/power/daily-usage`);
         u.searchParams.set("device_id", deviceId);
         u.searchParams.set("from", from);
         u.searchParams.set("to", to);
