@@ -296,18 +296,26 @@ export default function Home() {
 
           <div className="mb-4 h-[300px] w-full rounded-lg border border-zinc-200 bg-white p-2">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={daily} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
+              <AreaChart data={daily} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
+                <defs>
+                  <linearGradient id="colorUsage" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#16a34a" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#16a34a" stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="day" />
                 <YAxis />
                 <Tooltip />
-                <Line
+                <Area
                   type="monotone"
                   dataKey="usage_kwh"
                   stroke="#16a34a"
+                  fill="url(#colorUsage)"
+                  strokeWidth={2}
                   dot={false}
                 />
-              </LineChart>
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </section>
