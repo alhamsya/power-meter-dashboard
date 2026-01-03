@@ -36,6 +36,10 @@ function toISO(d: Date) {
   return d.toISOString();
 }
 
+function toYMD(d: Date) {
+  return d.toISOString().slice(0, 10);
+}
+
 function fmtNum(n: number | null | undefined, digits = 6) {
   if (n === null || n === undefined || Number.isNaN(n)) return "-";
   return n.toFixed(digits);
@@ -48,6 +52,10 @@ export default function Home() {
   const [latest, setLatest] = useState<Latest[]>([]);
   const [series, setSeries] = useState<Point[]>([]);
   const [daily, setDaily] = useState<Daily[]>([]);
+
+  const [billingFrom, setBillingFrom] = useState(() => toYMD(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)));
+  const [billingTo, setBillingTo] = useState(() => toYMD(new Date()));
+  const [billingDeviceId, setBillingDeviceId] = useState("iot");
 
   const [loadingLatest, setLoadingLatest] = useState(false);
   const [loadingSeries, setLoadingSeries] = useState(false);
@@ -105,10 +113,20 @@ export default function Home() {
       }
     })();
 
+    // keep billing device_id in sync with the main device field
+    setBillingDeviceId(deviceId);
+
     return () => {
       cancelled = true;
     };
   }, [deviceId]);
+  function billingInvoiceUrl() {
+    const u = new URL(`${API_BASE}/v1/api/billing/invoice`);
+    u.searchParams.set("device_id", billingDeviceId.trim() || "iot");
+    u.searchParams.set("from", billingFrom);
+    u.searchParams.set("to", billingTo);
+    return u.toString();
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -156,7 +174,7 @@ export default function Home() {
       } catch (e: any) {
         if (!cancelled) setError(`Daily usage: ${e?.message ?? String(e)}`);
       } finally {
-        if (!cancelled) setLoadingDaily(false);
+        setLoadingDaily(false);
       }
     })();
 
@@ -215,6 +233,64 @@ export default function Home() {
             {error}
           </div>
         ) : null}
+
+        <section className="mb-6">
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="text-base font-semibold">Billing</h2>
+            <span className="text-xs text-zinc-500">Generate invoice PDF</span>
+          </div>
+
+          <div className="rounded-lg border border-zinc-200 bg-white p-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-4 sm:items-end">
+              <label className="text-sm">
+                <div className="mb-1 text-zinc-600">Device ID</div>
+                <input
+                  className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500"
+                  value={billingDeviceId}
+                  onChange={(e) => setBillingDeviceId(e.target.value)}
+                  placeholder="iot"
+                />
+              </label>
+
+              <label className="text-sm">
+                <div className="mb-1 text-zinc-600">From</div>
+                <input
+                  type="date"
+                  className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500"
+                  value={billingFrom}
+                  onChange={(e) => setBillingFrom(e.target.value)}
+                />
+              </label>
+
+              <label className="text-sm">
+                <div className="mb-1 text-zinc-600">To</div>
+                <input
+                  type="date"
+                  className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500"
+                  value={billingTo}
+                  onChange={(e) => setBillingTo(e.target.value)}
+                />
+              </label>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  className="w-full rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+                  onClick={() => {
+                    const url = billingInvoiceUrl();
+                    window.open(url, "_blank", "noopener,noreferrer");
+                  }}
+                >
+                  Open Invoice PDF
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-3 text-xs text-zinc-500">
+              Endpoint: <span className="font-mono">/v1/api/billing/invoice</span>
+            </div>
+          </div>
+        </section>
 
         <section className="mb-6">
           <div className="mb-2 flex items-center justify-between">
@@ -322,9 +398,9 @@ export default function Home() {
 
         <footer className="mt-8 text-xs text-zinc-500">
           Tip: If you see "No data", ensure your backend exposes:
-          <span className="ml-1 font-mono">/v1/api/dashboard/latest</span>,
-          <span className="ml-1 font-mono">/v1/api/dashboard/timeseries</span>, and
-          <span className="ml-1 font-mono">/v1/api/dashboard/daily-usage</span>.
+          <span className="ml-1 font-mono">/v1/api/power/latest</span>,
+          <span className="ml-1 font-mono">/v1/api/power/time-series</span>, and
+          <span className="ml-1 font-mono">/v1/api/power/daily-usage</span>.
         </footer>
       </main>
     </div>
